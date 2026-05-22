@@ -1,0 +1,39 @@
+name: Android CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+
+    # 1. gradlew ගොනුවට Linux පරිසරය තුළ ධාවනය වීමට permissions ලබා දීම
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 2. Gemini API Key එක GitHub Secrets වලින් ලබාගෙන Environment Variable එකක් ලෙස එකතු කිරීම
+    - name: Build with Gradle
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: ./gradlew assembleDebug --no-daemon
+
+    # 3. සාර්ථකව Build වුන APK එක GitHub Actions වලින් බාගත (Download) කරගත හැකි පරිදි සුරැකීම
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Gitsync-v1.0-Debug-APK
+        path: app/build/outputs/apk/debug/app-debug.apk
