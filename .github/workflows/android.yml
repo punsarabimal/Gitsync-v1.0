@@ -21,23 +21,18 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'
 
-    # 1. ඔබේ Repository එකේ Gradle Wrapper එක (gradlew) නැති නිසා එය මෙහිදී අලුතින්ම සාදා ගනී.
+    # ඔබේ ඇප් එකේ AGP 9.1.1 සඳහා අවශ්‍ය වන Gradle 9.3.1 සංස්කරණය මෙහිදී සකස් කරයි
     - name: Setup Gradle Wrapper
-      run: gradle wrapper --gradle-version 8.4
+      run: gradle wrapper --gradle-version 9.3.1
 
-    # 2. සාදාගත් gradlew ගොනුවට ධාවනය වීමට අවශ්‍ය permissions ලබා දීම.
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 3. ඇප් එක Build කිරීම. 
-    # මෙහි GEMINI_API_KEY එක සඳහා Dummy අගයක් ලබා දී ඇත. 
-    # ඔබට සැබෑ Key එකක් තිබේ නම් එය GitHub Secrets වලට ඇතුළත් කරන්න.
     - name: Build with Gradle
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || 'dummy_key_for_build' }}
       run: ./gradlew assembleDebug --no-daemon
 
-    # 4. සාර්ථකව Build වූ පසු APK එක Download කරගත හැකි පරිදි Artifact එකක් ලෙස Upload කිරීම.
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
