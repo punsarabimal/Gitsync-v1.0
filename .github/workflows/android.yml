@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: uses/checkout@v4
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -21,17 +21,22 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'
 
-    # 1. gradlew ගොනුවට Linux පරිසරය තුළ ධාවනය වීමට permissions ලබා දීම
+    # 1. Repository එකේ gradlew නැති නිසා, මෙතනදී අලුතින්ම Gradle Wrapper එකක් සකස් කරනවා
+    # (ඔබේ project එකේ gradle version එකට ගැලපෙන ලෙස 8.4 අනුව සකසා ඇත)
+    - name: Setup Gradle Wrapper
+      run: gradle wrapper --gradle-version 8.4
+
+    # 2. අලුතින් හැදුනු gradlew එකට permission ලබා දීම
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 2. Gemini API Key එක GitHub Secrets වලින් ලබාගෙන Environment Variable එකක් ලෙස එකතු කිරීම
+    # 3. Gemini API Key එක සමඟ ඇප් එක Build කිරීම
     - name: Build with Gradle
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: ./gradlew assembleDebug --no-daemon
 
-    # 3. සාර්ථකව Build වුන APK එක GitHub Actions වලින් බාගත (Download) කරගත හැකි පරිදි සුරැකීම
+    # 4. ජනනය වන APK එක Artifact එකක් ලෙස Save කිරීම
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
