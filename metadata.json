@@ -1,0 +1,6 @@
+{
+  "name": "GitSync",
+  "description": "Premium mobile-first GitHub and repository management client with built-in editor",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
